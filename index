@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BetaSaisie">
+    <title>BetaSaisie - Notation Betteraves</title>
+    <!-- Tailwind CSS pour un design moderne et responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome pour les icônes tactiles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        agri: {
+                            50: '#f2f8f3',
+                            100: '#e2f0e5',
+                            500: '#1e7e34',
+                            600: '#19692c',
+                            700: '#145323',
+                            900: '#0b2f14',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Optimisation pour les écrans tactiles de smartphones */
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Masquer la scrollbar par défaut pour les défilements horizontaux */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Effet de secousse pour mot de passe erroné */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .shake {
+            animation: shake 0.2s ease-in-out 0s 2;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 min-h-screen pb-12">
+
+    <!-- ÉCRAN DE VERROUILLAGE SÉCURISÉ (LOGIN SCREEN) -->
+    <div id="lock-screen" class="fixed inset-0 bg-gray-100 z-[9999] flex flex-col justify-between p-6 select-none transition-opacity duration-300 overflow-y-auto">
+        <!-- Logo et En-tête de verrouillage -->
+        <div class="flex flex-col items-center mt-6">
+            <div class="flex items-center space-x-2.5 mb-2">
+                <!-- Betterave sucrière vectorielle -->
+                <svg class="w-12 h-12 filter drop-shadow-sm" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 24C25 16 20 12 26 6C31 1 35 10 32 24Z" fill="#22C55E"/>
+                    <path d="M32 24C39 16 44 12 38 6C33 1 29 10 32 24Z" fill="#15803D"/>
+                    <path d="M32 24C32 14 30 8 35 4C39 1 37 10 32 24Z" fill="#4ADE80"/>
+                    <path d="M27 24C22 18 16 16 21 10C25 5 28 12 27 24Z" fill="#166534"/>
+                    <path d="M37 24C42 18 48 16 43 10C39 5 36 12 37 24Z" fill="#15803D"/>
+                    <path d="M22 24C22 24 17 33 24 45C29 54 32 60 32 60C32 60 35 54 40 45C47 33 42 24 42 24H22Z" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2"/>
+                    <path d="M25 32C28 33 36 33 39 32" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M26 40C29 41 35 41 38 40" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M29 48C31 49 33 49 35 48" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M30 54C31 56 33 56 34 54L32 60L30 54Z" fill="#78350F"/>
+                </svg>
+                
+                <!-- Titre de l'application -->
+                <h1 class="text-3xl font-black text-agri-700 tracking-tight">BetaSaisie</h1>
+
+                <!-- Calculette vectorielle ajoutée à droite du titre -->
+                <svg class="w-9 h-9 text-agri-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2" fill="#F1F5F9"></rect>
+                    <rect x="7" y="5" width="10" height="4" rx="1" fill="#E2E8F0" stroke="currentColor" stroke-width="1.5"></rect>
+                    <circle cx="9" cy="12" r="1.5" fill="currentColor"></circle>
+                    <circle cx="13" cy="12" r="1.5" fill="currentColor"></circle>
+                    <circle cx="17" cy="12" r="1.5" fill="currentColor"></circle>
+                    <circle cx="9" cy="16" r="1.5" fill="currentColor"></circle>
+                    <circle cx="13" cy="16" r="1.5" fill="currentColor"></circle>
+                    <rect x="15" y="15" width="3" height="4" rx="0.5" fill="currentColor"></rect>
+                </svg>
+            </div>
+            
+            <!-- Véritable Logo ITB agrandi de manière visible -->
+            <div class="my-4 flex justify-center w-full max-w-xs">
+                <img src="Logo%20ITB%20cartouche%20rvb%20(1).png" alt="Logo ITB" class="h-24 md:h-28 w-auto filter drop-shadow-sm object-contain" onerror="showSvgLogoFallback(this)">
+            </div>
+            <p class="text-xs text-gray-500 font-bold tracking-wider uppercase">Accès sécurisé réservé ITB</p>
+        </div>
+
+        <!-- Formulaire de Connexion -->
+        <div id="login-card" class="w-full max-w-sm mx-auto bg-white rounded-2xl p-6 shadow-md border border-gray-200 my-auto space-y-4">
+            <div class="text-center">
+                <i class="fa-solid fa-user-shield text-2xl text-agri-600 mb-1"></i>
+                <h2 class="text-sm font-bold text-gray-700 uppercase tracking-wide">Authentification de terrain</h2>
+            </div>
+
+            <!-- Identifiant -->
+            <div>
+                <label for="login-username" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Identifiant</label>
+                <input type="text" id="login-username" placeholder="Ex: ITB45" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-agri-500 focus:outline-none focus:bg-white text-gray-900 font-medium uppercase">
+            </div>
+
+            <!-- Mot de passe -->
+            <div>
+                <label for="login-password" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Mot de passe</label>
+                <div class="relative">
+                    <input type="password" id="login-password" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-sm focus:ring-2 focus:ring-agri-500 focus:outline-none focus:bg-white text-gray-900 font-medium">
+                    <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none">
+                        <i id="eye-icon-login-password" class="fa-solid fa-eye text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Option Mémorisation : Se souvenir de moi -->
+            <div class="flex items-center space-x-2 py-1 select-none">
+                <input type="checkbox" id="login-remember" class="w-4 h-4 rounded text-agri-600 focus:ring-agri-500 border-gray-300 cursor-pointer">
+                <label for="login-remember" class="text-xs font-semibold text-gray-600 cursor-pointer hover:text-gray-950">Mémoriser mes identifiants</label>
+            </div>
+
+            <!-- Bouton de connexion -->
+            <button type="button" onclick="attemptLogin()" class="w-full bg-agri-600 hover:bg-agri-700 active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span>Se connecter</span>
+            </button>
+        </div>
+
+        <!-- Pied de page verrouillé -->
+        <div class="text-center text-xxs text-gray-400 mt-4">
+            <p class="font-semibold text-gray-500">© YohanDebeauvais2026</p>
+        </div>
+    </div>
+
+    <!-- HEADER DE L'APPLICATION RESTRUCTURÉ -->
+    <header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50 px-3 py-2 flex justify-between items-center select-none">
+        
+        <!-- GAUCHE : BetaSaisie entourée de la betterave et de la calculette -->
+        <div class="flex items-center space-x-2 flex-1">
+            <!-- Betterave sucrière (SVG gauche) -->
+            <svg class="w-8 h-8 flex-shrink-0 filter drop-shadow-sm" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 24C25 16 20 12 26 6C31 1 35 10 32 24Z" fill="#22C55E"/>
+                <path d="M32 24C39 16 44 12 38 6C33 1 29 10 32 24Z" fill="#15803D"/>
+                <path d="M32 24C32 14 30 8 35 4C39 1 37 10 32 24Z" fill="#4ADE80"/>
+                <path d="M27 24C22 18 16 16 21 10C25 5 28 12 27 24Z" fill="#166534"/>
+                <path d="M37 24C42 18 48 16 43 10C39 5 36 12 37 24Z" fill="#15803D"/>
+                <path d="M22 24C22 24 17 33 24 45C29 54 32 60 32 60C32 60 35 54 40 45C47 33 42 24 42 24H22Z" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2"/>
+                <path d="M25 32C28 33 36 33 39 32" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M26 40C29 41 35 41 38 40" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M29 48C31 49 33 49 35 48" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M30 54C31 56 33 56 34 54L32 60L30 54Z" fill="#78350F"/>
+            </svg>
+
+            <!-- Titre de l'application -->
+            <h1 class="text-base font-extrabold text-agri-700 tracking-tight leading-none">BetaSaisie</h1>
+
+            <!-- Calculette (SVG droite) -->
+            <svg class="w-6 h-6 flex-shrink-0 text-agri-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2" fill="#F1F5F9"></rect>
+                <rect x="7" y="5" width="10" height="4" rx="1" fill="#E2E8F0" stroke="currentColor" stroke-width="1.5"></rect>
+                <circle cx="9" cy="12" r="1" fill="currentColor"></circle>
+                <circle cx="13" cy="12" r="1" fill="currentColor"></circle>
+                <circle cx="17" cy="12" r="1" fill="currentColor"></circle>
+                <circle cx="9" cy="16" r="1" fill="currentColor"></circle>
+                <circle cx="13" cy="16" r="1" fill="currentColor"></circle>
+                <rect x="16" y="15" width="2" height="3" rx="0.5" fill="currentColor"></rect>
+            </svg>
+        </div>
+
+        <!-- DROITE : Vrai Logo ITB & Dispositif de déconnexion -->
+        <div class="flex items-center justify-end flex-shrink-0 space-x-2">
+            <span id="header-user-badge" class="hidden md:inline-flex bg-agri-100 text-agri-800 text-xxs font-bold px-2 py-1 rounded-lg border border-agri-200">
+                <i class="fa-solid fa-user-check mr-1 flex items-center"></i>
+                <span id="header-username">ITB</span>
+            </span>
+            <img src="Logo%20ITB%20cartouche%20rvb%20(1).png" alt="Logo ITB" class="h-9 w-auto" onerror="showSvgLogoFallback(this)">
+            <button onclick="logout()" title="Se déconnecter" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 active:bg-gray-100 transition-colors">
+                <i class="fa-solid fa-power-off text-base"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- SOUS-BARRE D'INFORMATION HORS-LIGNE -->
+    <div class="bg-agri-50 text-agri-700 text-center py-1.5 text-xxs font-semibold border-b border-agri-100 flex items-center justify-center gap-1.5 select-none">
+        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+        <span>Mode PWA Installable — Sauvegarde locale automatique</span>
+    </div>
+
+    <main class="max-w-md mx-auto px-3 py-4 space-y-4">
+
+        <!-- ÉTAPE 1 : CONFIGURATION DE L'ESSAI -->
+        <section id="step-config" class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
+            <div class="flex items-center space-x-2 mb-4 border-b pb-2 select-none">
+                <span class="bg-agri-100 text-agri-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
+                <h2 class="text-base font-bold text-gray-900">Configuration de l'essai</h2>
+            </div>
+
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 select-none">Nom de l'essai</label>
+                        <input type="text" id="trial-name" value="Essai Betteraves 2026" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-agri-500 focus:outline-none focus:bg-white text-gray-900 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 select-none">Date de notation</label>
+                        <input type="date" id="trial-date" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-agri-500 focus:outline-none focus:bg-white text-gray-900 font-medium">
+                    </div>
+                </div>
+
+                <!-- Indicateur de compte actif -->
+                <div class="bg-agri-50 border border-agri-100 rounded-xl p-3 flex justify-between items-center text-xs select-none">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-user text-agri-600 text-lg"></i>
+                        <div>
+                            <p class="font-bold text-gray-700">Utilisateur connecté</p>
+                            <p class="text-xxs text-gray-500" id="config-user-label">Compte : Non connecté</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="text-xxs bg-white hover:bg-red-50 text-red-600 border border-red-200 px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-sign-out-alt"></i> Quitter
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 select-none">Modalités</label>
+                        <input type="number" id="nb-modalities" value="18" min="1" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-agri-500 text-center text-gray-900 font-medium focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 select-none">Blocs</label>
+                        <input type="number" id="nb-blocks" value="4" min="1" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-agri-500 text-center text-gray-900 font-medium focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 select-none">Obs. / mod.</label>
+                        <input type="number" id="nb-obs" value="1" min="1" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-agri-500 text-center text-gray-900 font-medium focus:bg-white">
+                    </div>
+                </div>
+
+                <!-- GESTION DYNAMIQUE DES ADVENTICES -->
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 space-y-2">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 select-none">Adventices à cibler (Efficacité)</label>
+                    <p class="text-xxs text-gray-400 select-none">Saisissez les adventices présentes dans votre essai pour créer une évaluation d'efficacité dédiée à chacune.</p>
+                    <div class="flex space-x-2">
+                        <input type="text" id="new-adventice" placeholder="Ex: Chénopode, Matricaire..." onkeydown="if(event.key === 'Enter') { event.preventDefault(); addAdventice(); }" class="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-agri-500 focus:outline-none focus:bg-white text-gray-900 font-medium">
+                        <button type="button" onclick="addAdventice()" class="bg-agri-600 hover:bg-agri-700 active:bg-agri-800 text-white font-bold px-3 py-2 rounded-lg text-xs transition-colors flex items-center justify-center select-none">
+                            <i class="fa-solid fa-plus mr-1"></i> Ajouter
+                        </button>
+                    </div>
+                    <!-- Liste des badges adventices -->
+                    <div id="adventices-badges" class="flex flex-wrap gap-1.5 pt-1">
+                        <!-- Les badges seront injectés ici -->
+                    </div>
+                </div>
+
+                <!-- CHOIX DES VARIABLES -->
+                <div>
+                    <div class="flex justify-between items-center mb-2 select-none">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500">Variables à saisir</label>
+                        <div class="space-x-2">
+                            <button onclick="toggleAllVars(true)" class="text-xs text-agri-600 font-bold hover:underline">Tout cocher</button>
+                            <span class="text-gray-300">|</span>
+                            <button onclick="toggleAllVars(false)" class="text-xs text-gray-500 hover:underline">Effacer</button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 max-h-60 overflow-y-auto space-y-2 text-sm" id="variables-container">
+                        <!-- Généré dynamiquement en JS -->
+                    </div>
+                </div>
+
+                <button onclick="generateTrialPlan()" class="w-full bg-agri-600 hover:bg-agri-700 text-white font-bold py-3 px-4 rounded-xl shadow-sm transition flex items-center justify-center space-x-2 select-none">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span>Générer le plan de parcelles</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ÉTAPE 2 : INTERFACE DE SAISIE TACTILE ET CLAVIER -->
+        <section id="step-entry" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
+            <div class="flex items-center justify-between border-b pb-3 mb-3 select-none">
+                <div class="flex items-center space-x-2">
+                    <span class="bg-agri-100 text-agri-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">2</span>
+                    <h2 class="text-base font-bold text-gray-900">Saisie au champ</h2>
+                </div>
+                <button onclick="showConfig()" class="text-xs text-gray-500 border border-gray-300 rounded-lg px-2.5 py-1 flex items-center gap-1 active:bg-gray-100">
+                    <i class="fa-solid fa-cog"></i> Config
+                </button>
+            </div>
+
+            <!-- SÉLECTEUR DE PARCELLE UNIQUE -->
+            <div class="flex items-center justify-between bg-gray-50 rounded-xl p-2 border border-gray-200 mb-3 select-none">
+                <button onclick="navigatePlotGroup(-1)" class="w-12 h-12 bg-white active:bg-gray-200 text-gray-700 border border-gray-300 rounded-lg shadow-sm flex items-center justify-center">
+                    <i class="fa-solid fa-chevron-left text-lg"></i>
+                </button>
+                <div class="text-center flex-1">
+                    <div class="text-xs uppercase font-semibold text-gray-400">Parcelle en cours</div>
+                    <select id="plot-selector" onchange="onPlotSelectChange()" class="text-xl font-bold text-agri-700 bg-transparent border-none focus:outline-none text-center py-1 cursor-pointer">
+                        <!-- Options générées dynamiquement -->
+                    </select>
+                    <div id="plot-sub-info" class="text-xxs text-gray-500 font-medium">Bloc 1 | Mod 1</div>
+                </div>
+                <button onclick="navigatePlotGroup(1)" class="w-12 h-12 bg-white active:bg-gray-200 text-gray-700 border border-gray-300 rounded-lg shadow-sm flex items-center justify-center">
+                    <i class="fa-solid fa-chevron-right text-lg"></i>
+                </button>
+            </div>
+
+            <!-- SÉLECTEUR D'OBSERVATION RAPIDE (S'affiche si nbObs > 1) -->
+            <div id="obs-selector-container" class="mb-4 bg-gray-50 p-2.5 rounded-xl border border-gray-200 hidden select-none">
+                <!-- Les boutons d'observations Obs 1, Obs 2 seront injectés ici -->
+            </div>
+
+            <!-- Indicateur de progression globale -->
+            <div class="w-full bg-gray-100 rounded-full h-1.5 mb-4 select-none">
+                <div id="progress-bar" class="bg-agri-500 h-1.5 rounded-full" style="width: 0%"></div>
+            </div>
+
+            <!-- FORMULAIRE DYNAMIQUE DE SAISIE HYBRIDE -->
+            <div id="dynamic-inputs" class="space-y-4">
+                <!-- Les entrées clavier/tactiles s'affichent ici selon les choix de l'utilisateur -->
+            </div>
+
+            <!-- Bouton Validation Express -->
+            <div class="mt-6 pt-4 border-t border-gray-100 select-none">
+                <button onclick="saveCurrentPlotAndNext()" class="w-full bg-agri-600 hover:bg-agri-700 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>Sauvegarder & Suivant</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ÉTAPE 3 : EXPORT DES DONNÉES -->
+        <section id="step-export" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-gray-200 select-none">
+            <div class="flex items-center space-x-2 mb-4 border-b pb-2">
+                <span class="bg-agri-100 text-agri-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">3</span>
+                <h2 class="text-base font-bold text-gray-900">Données & Export</h2>
+            </div>
+            
+            <p class="text-xs text-gray-500 mb-4">
+                Toutes les parcelles saisies sont récapitulées ci-dessous. Vos modifications sont conservées sur cet appareil.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                <button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                    <i class="fa-solid fa-file-csv"></i> Exporter CSV
+                </button>
+                <!-- Bouton Mail / Partage dynamique mobile & PC -->
+                <button onclick="shareOrEmailCSV()" class="bg-agri-600 hover:bg-agri-700 text-white text-sm font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
+                    <i class="fa-solid fa-paper-plane"></i> Envoyer / Partager
+                </button>
+                <button onclick="confirmResetAll()" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-sm font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition active:scale-95">
+                    <i class="fa-solid fa-trash-can"></i> Réinitialiser
+                </button>
+            </div>
+
+            <!-- Tableau récapitulatif (scroll horizontal sur mobile) -->
+            <div class="overflow-x-auto border border-gray-200 rounded-xl">
+                <table class="min-w-full divide-y divide-gray-200 text-xs text-left" id="summary-table">
+                    <!-- Tête et corps générés dynamiquement -->
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIED DE PAGE PERSONNALISÉ -->
+    <footer class="text-center py-6 text-xs text-gray-400 select-none border-t border-gray-200 mt-12 bg-white">
+        <p class="font-semibold text-gray-500">© YohanDebeauvais2026</p>
+        <p class="text-[10px] mt-1 text-gray-300">BetaSaisie — Outil d'aide à la notation au champ en collaboration avec l'ITB</p>
+    </footer>
+
+    <!-- TOAST ET ALERTE MODERNE -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300 z-[10000] max-w-xs w-11/12 justify-center select-none">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-green-400"></i>
+        <span id="toast-message" class="font-medium text-center">Données enregistrées</span>
+    </div>
+
+    <!-- MODAL DE CONFIRMATION PERSONNALISÉ -->
+    <div id="custom-confirm-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200 select-none">
+        <div class="bg-white rounded-2xl p-5 max-w-xs w-full shadow-2xl transform scale-95 transition-transform duration-200">
+            <div class="text-red-600 text-3xl mb-3 text-center">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-base font-bold text-gray-900 text-center mb-2" id="confirm-title">Attention</h3>
+            <p class="text-xs text-gray-500 text-center mb-5" id="confirm-message">Voulez-vous vraiment continuer ?</p>
+            <div class="flex space-x-2">
+                <button id="confirm-cancel-btn" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-xl text-xs font-bold text-gray-700 transition">Annuler</button>
+                <button id="confirm-ok-btn" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 active:bg-red-800 rounded-xl text-xs font-bold text-white transition">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // BASE DE DONNÉES DES UTILISATEURS DU TERRAIN (IMAGE_81D6F6.PNG)
+        const USERS_DB = {
+            "ITB45": "Betteraves452026!",
+            "ITB02": "Betteraves022026!",
+            "ITB80/60": "Betteraves802026!",
+            "ITB76": "Betteraves762026!",
+            "ITB51": "Betteraves512026!",
+            "ITBGRIFFON": "Griffon022026!"
+        };
+
+        // FONCTION DE NETTOYAGE GLOBALE POUR LES IDENTIFIANTS COMPATIBLES
+        function cleanString(str) {
+            if (!str) return "";
+            return str.toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]/g, "_")
+                .trim();
+        }
+
+        // LISTE COMPLÈTE DES VARIABLES STATIQUES DE L'UTILISATEUR AVEC VALEURS PAR DÉFAUT -99 (Sauf Pucerons à 0 et Auxiliaires à 0)
+        const STATIC_VARIABLES = [
+            { id: "puc_apt_vert", label: "Pucerons aptères verts / pl", category: "Pucerons", type: "number", step: 0.1, default: 0 },
+            { id: "puc_ail_vert", label: "Pucerons ailés verts / pl", category: "Pucerons", type: "number", step: 0.1, default: 0 },
+            { id: "puc_apt_noir", label: "Pucerons aptères noirs / pl", category: "Pucerons", type: "number", step: 1, default: 0 },
+            { id: "puc_ail_noir", label: "Pucerons ailés noirs / pl", category: "Pucerons", type: "number", step: 1, default: 0 },
+            
+            // AUXILIAIRES (Valeur par défaut à 0)
+            { id: "aux_larve_chrysope", label: "Larve de chrysope / pl", category: "Auxiliaires", type: "number", step: 1, default: 0 },
+            { id: "aux_oeuf_chrysope", label: "Oeuf de chrysope / pl", category: "Auxiliaires", type: "number", step: 1, default: 0 },
+            { id: "aux_larve_syrphe", label: "Larve de syrphe / pl", category: "Auxiliaires", type: "number", step: 1, default: 0 },
+            { id: "aux_larve_coccinelle", label: "Larve de coccinelle / pl", category: "Auxiliaires", type: "number", step: 1, default: 0 },
+            { id: "aux_coccinelle_adulte", label: "Coccinelle adulte / pl", category: "Auxiliaires", type: "number", step: 1, default: 0 },
+            { id: "aux_oeuf_coccinelle", label: "Oeufs de coccinelle / pl", category: "Auxiliaires", type: "number", step: 1, default: 0 },
+
+            { id: "selectivite", label: "Sélectivité (0 à 10)", category: "Efficacité", type: "range", min: 0, max: 10, default: -99 },
+            { id: "efficacite", label: "Efficacité Globale (0 à 10)", category: "Efficacité", type: "range", min: 0, max: 10, default: -99 },
+            { id: "grav_cerco", label: "Gravité Cercosporiose (0-10)", category: "Maladies", type: "range", min: 0, max: 10, default: -99 },
+            { id: "grav_oidium", label: "Gravité Oïdium (0-10)", category: "Maladies", type: "range", min: 0, max: 10, default: -99 },
+            { id: "grav_rouille", label: "Gravité Rouille (0-10)", category: "Maladies", type: "range", min: 0, max: 10, default: -99 },
+            { id: "grav_ramu", label: "Gravité Ramulariose (0-10)", category: "Maladies", type: "range", min: 0, max: 10, default: -99 },
+            { id: "pct_jaunisse", label: "% Jaunisse", category: "Jaunisse", type: "range", min: 0, max: 100, default: -99 },
+            { id: "grav_jaunisse", label: "Gravité Jaunisse (0-10)", category: "Jaunisse", type: "range", min: 0, max: 10, default: -99 },
+            { id: "nb_montee", label: "Nombre de montées", category: "Divers", type: "number", step: 1, default: -99 },
+            { id: "nb_mildiou", label: "Nombre de mildiou", category: "Divers", type: "number", step: 1, default: -99 }
+        ];
+
+        // ÉTAT DE L'APPLICATION
+        let appState = {
+            trialName: "Essai Betteraves 2026",
+            trialDate: "", // Date au format YYYY-MM-DD
+            nbModalities: 18,
+            nbBlocks: 4,
+            nbObs: 1,
+            customAdventices: ["Chénopode", "Matricaire"],
+            selectedVars: [], 
+            plots: [], 
+            currentPlotIndex: 0, 
+            activeObs: 1,
+            currentUser: ""
+        };
+
+        // ACCÈS ET AUTHENTIFICATION
+        function attemptLogin() {
+            const usernameInput = document.getElementById("login-username").value.trim().toUpperCase();
+            const passwordInput = document.getElementById("login-password").value;
+            const rememberCheck = document.getElementById("login-remember").checked;
+            const loginCard = document.getElementById("login-card");
+
+            if (!usernameInput || !passwordInput) {
+                showToast("Veuillez renseigner les deux champs.", true);
+                return;
+            }
+
+            // Vérification de l'identifiant dans la base de données ITB
+            if (USERS_DB.hasOwnProperty(usernameInput) && USERS_DB[usernameInput] === passwordInput) {
+                // Connexion réussie
+                appState.currentUser = usernameInput;
+                sessionStorage.setItem("betasaisie_authenticated", "true");
+                sessionStorage.setItem("betasaisie_user", usernameInput);
+                
+                // Mémorisation si la case est cochée
+                if (rememberCheck) {
+                    localStorage.setItem("betasaisie_remember", "true");
+                    localStorage.setItem("betasaisie_remember_username", usernameInput);
+                    localStorage.setItem("betasaisie_remember_password", passwordInput);
+                } else {
+                    localStorage.removeItem("betasaisie_remember");
+                    localStorage.removeItem("betasaisie_remember_username");
+                    localStorage.removeItem("betasaisie_remember_password");
+                }
+
+                // Adapter automatiquement le nom de l'essai à l'utilisateur
+                if (appState.trialName === "Essai Betteraves 2026") {
+                    appState.trialName = `Essai Betteraves 2026 - ${usernameInput}`;
+                    document.getElementById("trial-name").value = appState.trialName;
+                }
+
+                saveStateToLocalStorage();
+                updateUserUI();
+
+                // Transition visuelle de déverrouillage
+                const lockScreen = document.getElementById("lock-screen");
+                lockScreen.classList.add("opacity-0");
+                setTimeout(() => {
+                    lockScreen.classList.add("hidden");
+                }, 300);
+
+                showToast(`Bienvenue, équipe ${usernameInput} !`);
+            } else {
+                // Connexion échouée : Effet de secousse
+                loginCard.classList.add("shake");
+                showToast("Identifiant ou mot de passe incorrect.", true);
+                setTimeout(() => {
+                    loginCard.classList.remove("shake");
+                }, 500);
+            }
+        }
+
+        function checkAuthOnLoad() {
+            const isAuth = sessionStorage.getItem("betasaisie_authenticated") === "true";
+            const user = sessionStorage.getItem("betasaisie_user");
+            const lockScreen = document.getElementById("lock-screen");
+
+            // Gestion de la mémorisation
+            const isRemembered = localStorage.getItem("betasaisie_remember") === "true";
+            if (isRemembered) {
+                document.getElementById("login-username").value = localStorage.getItem("betasaisie_remember_username") || "";
+                document.getElementById("login-password").value = localStorage.getItem("betasaisie_remember_password") || "";
+                document.getElementById("login-remember").checked = true;
+            }
+
+            if (isAuth && user) {
+                appState.currentUser = user;
+                lockScreen.classList.add("hidden");
+                updateUserUI();
+            } else {
+                lockScreen.classList.remove("hidden");
+            }
+        }
+
+        function logout() {
+            showCustomConfirm("Déconnexion", "Voulez-vous vraiment fermer votre session ITB active ?", function() {
+                sessionStorage.removeItem("betasaisie_authenticated");
+                sessionStorage.removeItem("betasaisie_user");
+                appState.currentUser = "";
+                
+                // Vider les champs si non mémorisés
+                const isRemembered = localStorage.getItem("betasaisie_remember") === "true";
+                if (!isRemembered) {
+                    document.getElementById("login-username").value = "";
+                    document.getElementById("login-password").value = "";
+                    document.getElementById("login-remember").checked = false;
+                }
+                
+                // Afficher à nouveau l'écran de verrouillage
+                const lockScreen = document.getElementById("lock-screen");
+                lockScreen.classList.remove("hidden", "opacity-0");
+                
+                showToast("Session fermée.");
+            });
+        }
+
+        function togglePasswordVisibility(fieldId) {
+            const passwordInput = document.getElementById(fieldId);
+            const eyeIcon = document.getElementById(`eye-icon-${fieldId}`);
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeIcon.className = "fa-solid fa-eye-slash text-sm";
+            } else {
+                passwordInput.type = "password";
+                eyeIcon.className = "fa-solid fa-eye text-sm";
+            }
+        }
+
+        function updateUserUI() {
+            const badge = document.getElementById("header-user-badge");
+            const usernameSpan = document.getElementById("header-username");
+            const configLabel = document.getElementById("config-user-label");
+
+            if (appState.currentUser) {
+                badge.classList.remove("hidden");
+                usernameSpan.innerText = appState.currentUser;
+                configLabel.innerText = `Compte connecté : ${appState.currentUser}`;
+            } else {
+                badge.classList.add("hidden");
+                configLabel.innerText = "Compte : Non connecté";
+            }
+        }
+
+        // Fonction de secours dessinant le logo de l'ITB en SVG vectoriel autonome
+        function showSvgLogoFallback(imgElement) {
+            const classes = imgElement.className || "h-9 w-auto";
+            const svgHTML = `
+                <svg class="${classes}" viewBox="0 0 250 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M35,32 L12,18 L21,9 Z" fill="#00823F" />
+                    <path d="M35,32 L25,7 L37,5 Z" fill="#00823F" />
+                    <path d="M35,32 L39,5 L51,7 Z" fill="#00823F" />
+                    <path d="M35,32 L49,9 L60,18 Z" fill="#00823F" />
+                    <path d="M35,32 C15,32 10,52 35,77 C60,52 55,32 35,32 Z" stroke="#00823F" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                    <text x="70" y="66" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="52" fill="#00823F" letter-spacing="-1.5">ITB</text>
+                    <text x="10" y="91" font-family="system-ui, -apple-system, sans-serif" font-weight="400" font-size="13.5" fill="#00823F" letter-spacing="-0.2">Institut Technique</text>
+                    <text x="10" y="106" font-family="system-ui, -apple-system, sans-serif" font-weight="400" font-size="13.5" fill="#00823F" letter-spacing="-0.2">de la <tspan font-weight="800">Betterave</tspan></text>
+                </svg>
+            `;
+            imgElement.outerHTML = svgHTML;
+        }
+
+        // Génère une icône d'application mobile autonome
+        function setupMobilePwaIcon() {
+            const svgIcon = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+                    <rect width="192" height="192" rx="42" fill="#145323"/>
+                    <g transform="translate(15, 20) scale(1.1)">
+                        <path d="M32 24C25 16 20 12 26 6C31 1 35 10 32 24Z" fill="#22C55E"/>
+                        <path d="M32 24C39 16 44 12 38 6C33 1 29 10 32 24Z" fill="#15803D"/>
+                        <path d="M27 24C22 18 16 16 21 10C25 5 28 12 27 24Z" fill="#166534"/>
+                        <path d="M22 24C22 24 17 33 24 45C29 54 32 60 32 60C32 60 35 54 40 45C47 33 42 24 42 24H22Z" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2"/>
+                        <path d="M25 32C28 33 36 33 39 32" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M26 40C29 41 35 41 38 40" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+                    </g>
+                    <g transform="translate(110, 45) scale(1.4)">
+                        <rect x="0" y="0" width="22" height="30" rx="3" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5"></rect>
+                        <rect x="3" y="3" width="16" height="6" rx="1" fill="#E2E8F0"></rect>
+                        <circle cx="6" cy="14" r="1.5" fill="#1E7E34"></circle>
+                        <circle cx="11" cy="14" r="1.5" fill="#1E7E34"></circle>
+                        <circle cx="16" cy="14" r="1.5" fill="#1E7E34"></circle>
+                        <circle cx="6" cy="20" r="1.5" fill="#1E7E34"></circle>
+                        <circle cx="11" cy="20" r="1.5" fill="#1E7E34"></circle>
+                        <rect x="15" y="19" width="3" height="5" rx="0.5" fill="#15803D"></rect>
+                    </g>
+                    <text x="96" y="162" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="20" fill="#F8FAFC" text-anchor="middle" letter-spacing="0.5">BetaSaisie</text>
+                </svg>
+            `;
+
+            const base64Svg = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgIcon)));
+
+            let favicon = document.querySelector("link[rel='icon']");
+            if (!favicon) {
+                favicon = document.createElement("link");
+                favicon.rel = "icon";
+                document.head.appendChild(favicon);
+            }
+            favicon.href = base64Svg;
+
+            let appleIcon = document.querySelector("link[rel='apple-touch-icon']");
+            if (!appleIcon) {
+                appleIcon = document.createElement("link");
+                appleIcon.rel = "apple-touch-icon";
+                document.head.appendChild(appleIcon);
+            }
+            appleIcon.href = base64Svg;
+
+            const manifest = {
+                "name": "BetaSaisie - Notation Betteraves",
+                "short_name": "BetaSaisie",
+                "description": "Saisie de notation agricole ITB",
+                "start_url": window.location.href,
+                "display": "standalone",
+                "orientation": "portrait-primary",
+                "background_color": "#145323",
+                "theme_color": "#145323",
+                "icons": [
+                    {
+                        "src": base64Svg,
+                        "sizes": "192x192",
+                        "type": "image/svg+xml"
+                    }
+                ]
+            };
+
+            const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+            const manifestURL = URL.createObjectURL(blob);
+
+            let manifestLink = document.querySelector("link[rel='manifest']");
+            if (!manifestLink) {
+                manifestLink = document.createElement("link");
+                manifestLink.rel = "manifest";
+                document.head.appendChild(manifestLink);
+            }
+            manifestLink.href = manifestURL;
+        }
+
+        function getActiveVariablesConfig() {
+            const dynamicVars = (appState.customAdventices || []).map(adv => ({
+                id: `eff_adv_${cleanString(adv)}`,
+                label: `Efficacité - ${adv} (0 à 10)`,
+                category: "Efficacité Adventices",
+                type: "range",
+                min: 0,
+                max: 10,
+                default: -99,
+                isDynamic: true,
+                originalName: adv
+            }));
+            return [...STATIC_VARIABLES, ...dynamicVars];
+        }
+
+        // CHARGEMENT INITIAL
+        window.onload = function() {
+            setupMobilePwaIcon();
+            loadStateFromLocalStorage();
+            
+            // Sécurité d'accès au démarrage
+            checkAuthOnLoad();
+            
+            // Initialisation de la date d'aujourd'hui par défaut si vide
+            if (!appState.trialDate) {
+                appState.trialDate = new Date().toISOString().split('T')[0];
+            }
+
+            initVariablesList();
+            renderAdventicesBadges();
+            updateUI();
+        };
+
+        function initVariablesList() {
+            const container = document.getElementById("variables-container");
+            container.innerHTML = "";
+            
+            let lastCat = "";
+            const allVars = getActiveVariablesConfig();
+            
+            allVars.forEach(v => {
+                if (v.category !== lastCat) {
+                    lastCat = v.category;
+                    const catTitle = document.createElement("div");
+                    catTitle.className = "text-xxs font-bold uppercase tracking-wide text-agri-700 mt-3 border-b border-gray-100 pb-1 select-none";
+                    catTitle.innerText = lastCat;
+                    container.appendChild(catTitle);
+                }
+
+                const label = document.createElement("label");
+                label.className = "flex items-center space-x-3 py-1 cursor-pointer active:bg-gray-100 rounded px-1 select-none";
+                
+                const isChecked = appState.selectedVars.includes(v.id) ? "checked" : "";
+                label.innerHTML = `
+                    <input type="checkbox" value="${v.id}" ${isChecked} class="var-checkbox h-4.5 w-4.5 rounded text-agri-600 focus:ring-agri-500 border-gray-300" onchange="onVarCheckboxChange(this)">
+                    <span class="text-gray-700 font-medium">${v.label}</span>
+                `;
+                container.appendChild(label);
+            });
+        }
+
+        function onVarCheckboxChange(cb) {
+            if (cb.checked) {
+                if (!appState.selectedVars.includes(cb.value)) {
+                    appState.selectedVars.push(cb.value);
+                }
+            } else {
+                appState.selectedVars = appState.selectedVars.filter(v => v !== cb.value);
+            }
+            saveStateToLocalStorage();
+        }
+
+        function toggleAllVars(check) {
+            document.querySelectorAll(".var-checkbox").forEach(cb => {
+                cb.checked = check;
+                onVarCheckboxChange(cb);
+            });
+        }
+
+        function addAdventice() {
+            const input = document.getElementById("new-adventice");
+            const name = input.value.trim();
+            if (!name) return;
+
+            const clean = cleanString(name);
+            if (!clean) return;
+
+            if (appState.customAdventices.some(adv => cleanString(adv) === clean)) {
+                showToast("Cette adventice existe déjà !", true);
+                return;
+            }
+
+            appState.customAdventices.push(name);
+            input.value = "";
+
+            const newVarId = `eff_adv_${clean}`;
+            if (!appState.selectedVars.includes(newVarId)) {
+                appState.selectedVars.push(newVarId);
+            }
+
+            saveStateToLocalStorage();
+            renderAdventicesBadges();
+            initVariablesList();
+            showToast(`Adventice "${name}" ajoutée !`);
+        }
+
+        function removeAdventice(name) {
+            const clean = cleanString(name);
+            appState.customAdventices = appState.customAdventices.filter(adv => cleanString(adv) !== clean);
+            
+            const varId = `eff_adv_${clean}`;
+            appState.selectedVars = appState.selectedVars.filter(v => v !== varId);
+
+            saveStateToLocalStorage();
+            renderAdventicesBadges();
+            initVariablesList();
+            showToast(`Adventice "${name}" retirée.`);
+        }
+
+        function renderAdventicesBadges() {
+            const container = document.getElementById("adventices-badges");
+            container.innerHTML = "";
+            
+            if (appState.customAdventices.length === 0) {
+                container.innerHTML = `<span class="text-xxs text-gray-400 italic py-1">Aucune adventice spécifique ajoutée</span>`;
+                return;
+            }
+
+            appState.customAdventices.forEach(adv => {
+                const badge = document.createElement("span");
+                badge.className = "inline-flex items-center bg-agri-100 text-agri-800 text-xs font-semibold px-2.5 py-1 rounded-full border border-agri-200 select-none";
+                badge.innerHTML = `
+                    <span class="mr-1.5">${adv}</span>
+                    <button type="button" onclick="removeAdventice('${adv.replace(/'/g, "\\'")}')" class="text-agri-600 hover:text-agri-900 focus:outline-none font-bold text-sm leading-none">&times;</button>
+                `;
+                container.appendChild(badge);
+            });
+        }
+
+        function showConfig() {
+            document.getElementById("step-config").classList.remove("hidden");
+            document.getElementById("step-entry").classList.add("hidden");
+            document.getElementById("step-export").classList.add("hidden");
+        }
+
+        function generateTrialPlan() {
+            appState.trialName = document.getElementById("trial-name").value;
+            appState.trialDate = document.getElementById("trial-date").value || new Date().toISOString().split('T')[0];
+            appState.nbModalities = parseInt(document.getElementById("nb-modalities").value) || 1;
+            appState.nbBlocks = parseInt(document.getElementById("nb-blocks").value) || 1;
+            appState.nbObs = parseInt(document.getElementById("nb-obs").value) || 1;
+
+            appState.selectedVars = [];
+            document.querySelectorAll(".var-checkbox:checked").forEach(cb => {
+                appState.selectedVars.push(cb.value);
+            });
+
+            if (appState.selectedVars.length === 0) {
+                showToast("Sélectionnez au moins une variable à noter !", true);
+                return;
+            }
+
+            appState.plots = [];
+            for (let b = 1; b <= appState.nbBlocks; b++) {
+                for (let m = 1; m <= appState.nbModalities; m++) {
+                    for (let o = 1; o <= appState.nbObs; o++) {
+                        const plotNum = (b * 100) + m;
+                        const plotId = appState.nbObs > 1 ? `${plotNum} - O${o}` : `${plotNum}`;
+                        
+                        const values = {};
+                        appState.selectedVars.forEach(vId => {
+                            const conf = getActiveVariablesConfig().find(item => item.id === vId);
+                            values[vId] = conf ? conf.default : "";
+                        });
+
+                        appState.plots.push({
+                            id: plotId,
+                            plotNum: plotNum,
+                            bloc: b,
+                            mod: m,
+                            obs: o,
+                            values: values,
+                            isCompleted: false,
+                            date: appState.trialDate
+                        });
+                    }
+                }
+            }
+
+            appState.currentPlotIndex = 0;
+            appState.activeObs = 1;
+            saveStateToLocalStorage();
+            updateUI();
+            
+            document.getElementById("step-config").classList.add("hidden");
+            document.getElementById("step-entry").classList.remove("hidden");
+            document.getElementById("step-export").classList.remove("hidden");
+
+            showToast("Plan généré ! " + appState.plots.length + " observations prêtes.");
+        }
+
+        function updateUI() {
+            if (appState.plots.length === 0) {
+                document.getElementById("step-entry").classList.add("hidden");
+                document.getElementById("step-export").classList.add("hidden");
+                return;
+            }
+
+            const trialNameInput = document.getElementById("trial-name");
+            if (trialNameInput && trialNameInput.value !== appState.trialName) {
+                trialNameInput.value = appState.trialName;
+            }
+
+            const trialDateInput = document.getElementById("trial-date");
+            if (trialDateInput) {
+                if (!appState.trialDate) {
+                    appState.trialDate = new Date().toISOString().split('T')[0];
+                }
+                trialDateInput.value = appState.trialDate;
+            }
+
+            document.getElementById("step-entry").classList.remove("hidden");
+            document.getElementById("step-export").classList.remove("hidden");
+
+            const selector = document.getElementById("plot-selector");
+            selector.innerHTML = "";
+            const uniquePlotNums = [...new Set(appState.plots.map(p => p.plotNum))];
+
+            uniquePlotNums.forEach(plotNum => {
+                const obsOfPlot = appState.plots.filter(p => p.plotNum === plotNum);
+                const allDone = obsOfPlot.every(p => p.isCompleted);
+                const countDone = obsOfPlot.filter(p => p.isCompleted).length;
+
+                const opt = document.createElement("option");
+                opt.value = plotNum;
+                opt.innerText = `Parcelle ${plotNum} ${allDone ? '✅' : `(${countDone}/${appState.nbObs})`}`;
+                selector.appendChild(opt);
+            });
+
+            const currentPlot = appState.plots[appState.currentPlotIndex];
+            if (currentPlot) {
+                selector.value = currentPlot.plotNum;
+                appState.activeObs = currentPlot.obs;
+            }
+
+            renderObservationTabs(currentPlot ? currentPlot.plotNum : uniquePlotNums[0]);
+            loadPlotData(appState.currentPlotIndex);
+            
+            const completedCount = appState.plots.filter(p => p.isCompleted).length;
+            const pct = (completedCount / appState.plots.length) * 100;
+            document.getElementById("progress-bar").style.width = pct + "%";
+
+            renderSummaryTable();
+        }
+
+        function renderObservationTabs(plotNum) {
+            const container = document.getElementById("obs-selector-container");
+            if (appState.nbObs > 1) {
+                container.classList.remove("hidden");
+                container.innerHTML = `<div class="text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wide">Plante / Observation à saisir</div>`;
+                
+                const grid = document.createElement("div");
+                grid.className = "flex gap-1.5 overflow-x-auto pb-1 scrollbar-none";
+
+                const siblingPlots = appState.plots.filter(p => p.plotNum === plotNum);
+                siblingPlots.forEach(p => {
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.onclick = () => selectObservation(p.obs);
+
+                    const isActive = p.obs === appState.activeObs;
+                    const isDone = p.isCompleted;
+
+                    btn.className = `flex-none min-w-[65px] py-2 px-2.5 text-xs font-bold rounded-lg transition-all ${
+                        isActive 
+                        ? 'bg-agri-600 text-white shadow-md scale-105' 
+                        : isDone 
+                            ? 'bg-green-100 text-green-800 border border-green-300' 
+                            : 'bg-white text-gray-600 border border-gray-300'
+                    }`;
+                    btn.innerText = `Obs ${p.obs} ${isDone ? '✓' : ''}`;
+                    grid.appendChild(btn);
+                });
+                container.appendChild(grid);
+            } else {
+                container.classList.add("hidden");
+                container.innerHTML = "";
+            }
+        }
+
+        function selectObservation(obsNum) {
+            const currentPlot = appState.plots[appState.currentPlotIndex];
+            const idx = appState.plots.findIndex(p => p.plotNum === currentPlot.plotNum && p.obs === obsNum);
+            if (idx !== -1) {
+                appState.currentPlotIndex = idx;
+                appState.activeObs = obsNum;
+                updateUI();
+            }
+        }
+
+        function loadPlotData(idx) {
+            const plot = appState.plots[idx];
+            if (!plot) return;
+
+            document.getElementById("plot-sub-info").innerText = `Bloc ${plot.bloc} | Modalité ${plot.mod} ${appState.nbObs > 1 ? '| Obs ' + plot.obs + ' / ' + appState.nbObs : ''}`;
+
+            const container = document.getElementById("dynamic-inputs");
+            container.innerHTML = "";
+
+            appState.selectedVars.forEach(vId => {
+                const conf = getActiveVariablesConfig().find(item => item.id === vId);
+                if (!conf) return;
+
+                const value = plot.values[vId];
+                const inputGroup = document.createElement("div");
+                inputGroup.className = "bg-gray-50 p-3.5 rounded-xl border border-gray-200 shadow-sm";
+
+                let headerHTML = `
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">${conf.category}</span>
+                        <span class="text-sm font-bold text-gray-800">${conf.label}</span>
+                    </div>
+                `;
+                inputGroup.innerHTML = headerHTML;
+
+                if (conf.type === 'number') {
+                    const inc = conf.step;
+                    inputGroup.innerHTML += `
+                        <div class="flex items-center space-x-2">
+                            <button type="button" onclick="changeNumValue('${vId}', -${inc})" class="w-12 h-12 bg-white active:bg-gray-200 border border-gray-300 rounded-xl text-lg font-bold flex items-center justify-center shadow-sm select-none">-</button>
+                            <input type="number" id="input-${vId}" step="${conf.step}" value="${value}" onchange="updateValueFromInput('${vId}')" class="flex-1 h-12 text-center text-lg font-bold border border-gray-300 rounded-xl focus:ring-2 focus:ring-agri-500 focus:outline-none focus:bg-white text-gray-900">
+                            <button type="button" onclick="changeNumValue('${vId}', ${inc})" class="w-12 h-12 bg-white active:bg-gray-200 border border-gray-300 rounded-xl text-lg font-bold flex items-center justify-center shadow-sm select-none">+</button>
+                        </div>
+                    `;
+                } else if (conf.type === 'range') {
+                    const isPct = conf.max === 100;
+                    let inputsHTML = `
+                        <div class="space-y-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs text-gray-400 font-semibold select-none">Saisie :</span>
+                                <input type="number" id="input-${vId}" min="${conf.min}" max="${conf.max}" value="${value}" oninput="updateValueFromInput('${vId}')" class="w-24 h-9 text-center text-sm font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-agri-500 focus:outline-none focus:bg-white text-gray-900">
+                                <span class="text-xs text-gray-500 font-bold select-none">${isPct ? '%' : '/ 10'}</span>
+                            </div>
+                            
+                            <div class="text-xxs font-semibold text-gray-400 select-none">Raccourcis tactiles :</div>
+                            <div class="flex gap-1 overflow-x-auto pb-1 scrollbar-none select-none">
+                    `;
+
+                    if (isPct) {
+                        for (let val = 0; val <= 100; val += 10) {
+                            const isSelected = parseInt(value) === val;
+                            inputsHTML += `
+                                <button type="button" onclick="setQuickValue('${vId}', ${val})" id="btn-${vId}-${val}" class="quick-btn-${vId} text-xxs font-bold px-2.5 py-1.5 rounded-lg border flex-none ${
+                                    isSelected 
+                                    ? 'bg-agri-600 text-white border-agri-600 shadow-sm scale-105' 
+                                    : 'bg-white text-gray-600 border-gray-200 active:bg-gray-100'
+                                }">${val}%</button>
+                            `;
+                        }
+                    } else {
+                        for (let val = 0; val <= 10; val++) {
+                            const isSelected = value !== "" && parseInt(value) === val;
+                            inputsHTML += `
+                                <button type="button" onclick="setQuickValue('${vId}', ${val})" id="btn-${vId}-${val}" class="quick-btn-${vId} text-xs font-bold w-8 h-8 rounded-full border flex-none flex items-center justify-center ${
+                                    isSelected 
+                                    ? 'bg-agri-600 text-white border-agri-600 shadow-sm scale-11' 
+                                    : 'bg-white text-gray-600 border-gray-200 active:bg-gray-100'
+                                }">${val}</button>
+                            `;
+                        }
+                    }
+                    inputsHTML += `
+                            </div>
+                        </div>
+                    `;
+                    inputGroup.innerHTML += inputsHTML;
+                } else {
+                    inputGroup.innerHTML += `
+                        <input type="text" id="input-${vId}" value="${value}" onchange="updateValueFromInput('${vId}')" placeholder="Saisir la note..." class="w-full h-11 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-agri-500 focus:bg-white text-gray-900">
+                    `;
+                }
+
+                container.appendChild(inputGroup);
+            });
+        }
+
+        // MAJ de la valeur à la volée avec les boutons +/-
+        function changeNumValue(varId, delta) {
+            const input = document.getElementById(`input-${varId}`);
+            if (!input) return;
+            let val = parseFloat(input.value);
+            if (isNaN(val) || val === -99) {
+                val = (delta > 0) ? delta : 0;
+            } else {
+                val = Math.round((val + delta) * 10) / 10;
+            }
+            if (val < 0) val = 0;
+            input.value = val;
+            updateValueFromInput(varId);
+        }
+
+        function setQuickValue(varId, val) {
+            const input = document.getElementById(`input-${varId}`);
+            if (input) {
+                input.value = val;
+                updateValueFromInput(varId);
+                
+                document.querySelectorAll(`.quick-btn-${varId}`).forEach(btn => {
+                    btn.classList.remove('bg-agri-600', 'text-white', 'border-agri-600', 'shadow-sm', 'scale-105', 'scale-11');
+                    btn.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
+                });
+                
+                const activeBtn = document.getElementById(`btn-${varId}-${val}`);
+                if (activeBtn) {
+                    activeBtn.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
+                    const isPct = varId === "pct_jaunisse";
+                    activeBtn.classList.add('bg-agri-600', 'text-white', 'border-agri-600', 'shadow-sm', isPct ? 'scale-105' : 'scale-11');
+                }
+            }
+        }
+
+        function updateValueFromInput(varId) {
+            const input = document.getElementById(`input-${varId}`);
+            if (!input) return;
+            
+            const currentPlot = appState.plots[appState.currentPlotIndex];
+            currentPlot.values[varId] = input.value;
+            currentPlot.isCompleted = true;
+
+            saveStateToLocalStorage();
+        }
+
+        function navigatePlotGroup(direction) {
+            const uniquePlotNums = [...new Set(appState.plots.map(p => p.plotNum))];
+            const currentPlot = appState.plots[appState.currentPlotIndex];
+            if (!currentPlot) return;
+
+            const currentGroupIdx = uniquePlotNums.indexOf(currentPlot.plotNum);
+            let nextGroupIdx = currentGroupIdx + direction;
+
+            if (nextGroupIdx >= 0 && nextGroupIdx < uniquePlotNums.length) {
+                const targetPlotNum = uniquePlotNums[nextGroupIdx];
+                const targetIdx = appState.plots.findIndex(p => p.plotNum === targetPlotNum && p.obs === 1);
+                if (targetIdx !== -1) {
+                    appState.currentPlotIndex = targetIdx;
+                    appState.activeObs = 1;
+                    updateUI();
+                }
+            }
+        }
+
+        function onPlotSelectChange() {
+            const selectedPlotNum = parseInt(document.getElementById("plot-selector").value);
+            let idx = appState.plots.findIndex(p => p.plotNum === selectedPlotNum && p.obs === appState.activeObs);
+            if (idx === -1) {
+                idx = appState.plots.findIndex(p => p.plotNum === selectedPlotNum);
+            }
+            if (idx !== -1) {
+                appState.currentPlotIndex = idx;
+                appState.activeObs = appState.plots[idx].obs;
+                updateUI();
+            }
+        }
+
+        function saveCurrentPlotAndNext() {
+            appState.plots[appState.currentPlotIndex].isCompleted = true;
+            showToast(`Obs. ${appState.activeObs} de la parcelle ${appState.plots[appState.currentPlotIndex].plotNum} validée !`);
+
+            if (appState.currentPlotIndex < appState.plots.length - 1) {
+                appState.currentPlotIndex++;
+                appState.activeObs = appState.plots[appState.currentPlotIndex].obs;
+                updateUI();
+            } else {
+                updateUI();
+                showToast("🎉 Toutes les parcelles ont été complétées !", false);
+            }
+        }
+
+        function renderSummaryTable() {
+            const table = document.getElementById("summary-table");
+            table.innerHTML = "";
+
+            const activeConfig = getActiveVariablesConfig();
+
+            const thead = document.createElement("thead");
+            thead.className = "bg-gray-50 border-b border-gray-200";
+            
+            let headersHTML = `
+                <tr>
+                    <th class="px-3 py-2 font-semibold text-gray-700">Parcelle</th>
+                    <th class="px-2 py-2 font-semibold text-gray-700">Bloc</th>
+                    <th class="px-2 py-2 font-semibold text-gray-700">Mod</th>
+                    <th class="px-2 py-2 font-semibold text-gray-700">Obs</th>
+            `;
+            
+            appState.selectedVars.forEach(vId => {
+                const conf = activeConfig.find(item => item.id === vId);
+                headersHTML += `<th class="px-2 py-2 font-semibold text-gray-700">${conf ? conf.label.split('(')[0] : vId}</th>`;
+            });
+            headersHTML += `</tr>`;
+            thead.innerHTML = headersHTML;
+            table.appendChild(thead);
+
+            const tbody = document.createElement("tbody");
+            tbody.className = "divide-y divide-gray-100 bg-white";
+            
+            appState.plots.forEach((p, plotIdx) => {
+                const tr = document.createElement("tr");
+                tr.className = p.isCompleted ? "bg-green-50/40 hover:bg-green-50" : "hover:bg-gray-50";
+                
+                let rowHTML = `
+                    <td class="px-3 py-2.5 font-bold text-agri-700 cursor-pointer" onclick="goToPlot(${plotIdx})">${p.plotNum} ${p.isCompleted ? '✅' : ''}</td>
+                    <td class="px-2 py-2.5 text-gray-500">${p.bloc}</td>
+                    <td class="px-2 py-2.5 text-gray-500">${p.mod}</td>
+                    <td class="px-2 py-2.5 text-gray-400 font-bold">O${p.obs}</td>
+                `;
+
+                appState.selectedVars.forEach(vId => {
+                    const val = p.values[vId] !== undefined ? p.values[vId] : "-";
+                    rowHTML += `<td class="px-2 py-2.5 font-medium">${val}</td>`;
+                });
+
+                tr.innerHTML = rowHTML;
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+        }
+
+        function goToPlot(idx) {
+            appState.currentPlotIndex = idx;
+            appState.activeObs = appState.plots[idx].obs;
+            updateUI();
+            window.scrollTo({ top: 180, behavior: 'smooth' });
+        }
+
+        // Formater la date YYYY-MM-DD en français DD/MM/YYYY
+        function formatDateFR(dateStr) {
+            if (!dateStr) return "";
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return dateStr;
+        }
+
+        // GÉNÉRER LA CHAÎNE DE TEXTE CSV BRUTE
+        function generateCSVString() {
+            const activeConfig = getActiveVariablesConfig();
+            let csvContent = "\uFEFF"; // BOM UTF-8 pour Excel
+            
+            let headers = ["Essai", "Date", "Parcelle", "Bloc", "Modalite", "Observation"];
+            appState.selectedVars.forEach(vId => {
+                const conf = activeConfig.find(item => item.id === vId);
+                headers.push(conf ? conf.label : vId);
+            });
+            csvContent += headers.map(h => `"${h.replace(/"/g, '""')}"`).join(";") + "\n";
+
+            appState.plots.forEach(p => {
+                let row = [
+                    appState.trialName,
+                    formatDateFR(p.date || appState.trialDate),
+                    p.plotNum,
+                    p.bloc,
+                    p.mod,
+                    p.obs
+                ];
+                appState.selectedVars.forEach(vId => {
+                    row.push(p.values[vId]);
+                });
+                csvContent += row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(";") + "\n";
+            });
+            return csvContent;
+        }
+
+        // EXPORTER DIRECTEMENT LE FICHIER CSV EN LOCAL
+        function exportToCSV() {
+            if (appState.plots.length === 0) {
+                showToast("Aucune donnée à exporter.", true);
+                return;
+            }
+
+            const csvContent = generateCSVString();
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const cleanName = appState.trialName.toLowerCase().replace(/[^a-z0-9]/g, "_");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `notation_agri_${cleanName}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("CSV téléchargé !");
+        }
+
+        // FONCTION DE PARTAGE INTELLIGENTE ET SÉCURISÉE (WEB SHARE API + repli MAILTO)
+        function shareOrEmailCSV() {
+            if (appState.plots.length === 0) {
+                showToast("Aucune donnée à partager.", true);
+                return;
+            }
+
+            const csvContent = generateCSVString();
+            const cleanName = appState.trialName.toLowerCase().replace(/[^a-z0-9]/g, "_");
+            const filename = `notation_agri_${cleanName}.csv`;
+
+            // Tentative d'utilisation de l'API de partage native du smartphone (iOS / Android)
+            try {
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const file = new File([blob], filename, { type: 'text/csv' });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: `Extraction BetaSaisie - ${appState.trialName}`,
+                        text: `Bonjour, voici l'extraction CSV de mes notations de betteraves du ${formatDateFR(appState.trialDate)}.`
+                    }).then(() => {
+                        showToast("Fichier partagé avec succès !");
+                    }).catch((err) => {
+                        if (err.name !== 'AbortError') {
+                            fallbackToMailto(csvContent);
+                        }
+                    });
+                    return;
+                }
+            } catch (e) {
+                console.log("Le partage de fichier natif n'est pas supporté, redirection vers email...");
+            }
+
+            // Option de repli si le partage natif de fichier n'est pas supporté (ex : PC de bureau)
+            fallbackToMailto(csvContent);
+        }
+
+        // REPLI AUTOMATIQUE PAR MAIL (MAILTO:)
+        function fallbackToMailto(csvContent) {
+            const subject = encodeURIComponent(`Extraction BetaSaisie - ${appState.trialName}`);
+            let bodyText = `Bonjour,\n\nVoici les données de notation collectées avec l'application BetaSaisie pour l'essai "${appState.trialName}".\n\n`;
+            
+            // Si le CSV n'est pas trop volumineux, on l'écrit directement dans le corps du mail pour un copier-coller rapide
+            if (csvContent.length < 2000) {
+                bodyText += `--- DONNÉES CSV ---\n${csvContent}\n-------------------\n`;
+            } else {
+                bodyText += `Les données de cet essai étant volumineuses, veuillez privilégier le téléchargement en cliquant sur le bouton "Exporter CSV" directement depuis l'application dans votre navigateur.\n`;
+            }
+            
+            bodyText += `\nEnvoyé depuis l'application de terrain BetaSaisie.`;
+            const mailtoUrl = `mailto:?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+            
+            // Ouvrir l'application mail installée sur l'appareil
+            window.location.href = mailtoUrl;
+            showToast("Ouverture de votre messagerie...");
+        }
+
+        // SAUVEGARDE ET CHARGEMENT LOCALE DANS LE TÉLÉPHONE
+        function saveStateToLocalStorage() {
+            localStorage.setItem("agro_saisie_state", JSON.stringify(appState));
+        }
+
+        function loadStateFromLocalStorage() {
+            const saved = localStorage.getItem("agro_saisie_state");
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (!parsed.customAdventices) {
+                        parsed.customAdventices = [];
+                    }
+                    if (parsed.selectedVars) {
+                        parsed.selectedVars = parsed.selectedVars.filter(v => v !== "type_adventice");
+                    }
+                    appState = parsed;
+                } catch (e) {
+                    console.error("Erreur de chargement des données locales", e);
+                }
+            }
+        }
+
+        function confirmResetAll() {
+            showCustomConfirm(
+                "Effacer les données ?", 
+                "⚠️ Attention : Cette action va supprimer définitivement l'essai en cours, les adventices saisies et toutes les notations déjà enregistrées.",
+                function() {
+                    localStorage.removeItem("agro_saisie_state");
+                    appState.plots = [];
+                    appState.customAdventices = ["Chénopode", "Matricaire"];
+                    appState.selectedVars = []; // Tout décoché par défaut !
+                    appState.trialDate = new Date().toISOString().split('T')[0];
+                    appState.currentPlotIndex = 0;
+                    appState.activeObs = 1;
+                    
+                    // Remise à plat des valeurs par défaut dans les éléments HTML
+                    document.getElementById("nb-modalities").value = 18;
+                    document.getElementById("nb-blocks").value = 4;
+                    document.getElementById("nb-obs").value = 1;
+                    appState.nbModalities = 18;
+                    appState.nbBlocks = 4;
+                    appState.nbObs = 1;
+                    
+                    // Restaurer le nom de l'essai par défaut lié à l'utilisateur actif
+                    if (appState.currentUser) {
+                        appState.trialName = `Essai Betteraves 2026 - ${appState.currentUser}`;
+                    } else {
+                        appState.trialName = "Essai Betteraves 2026";
+                    }
+                    
+                    initVariablesList();
+                    renderAdventicesBadges();
+                    showConfig();
+                    updateUI();
+                    showToast("Application réinitialisée.");
+                }
+            );
+        }
+
+        let confirmCallback = null;
+        function showCustomConfirm(title, message, callback) {
+            document.getElementById("confirm-title").innerText = title;
+            document.getElementById("confirm-message").innerText = message;
+            confirmCallback = callback;
+            
+            const modal = document.getElementById("custom-confirm-modal");
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                modal.firstElementChild.classList.remove("scale-95");
+            }, 10);
+        }
+
+        function hideCustomConfirm() {
+            const modal = document.getElementById("custom-confirm-modal");
+            modal.classList.add("opacity-0");
+            modal.firstElementChild.classList.add("scale-95");
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 200);
+        }
+
+        document.getElementById("confirm-cancel-btn").onclick = hideCustomConfirm;
+        document.getElementById("confirm-ok-btn").onclick = function() {
+            if (confirmCallback) confirmCallback();
+            hideCustomConfirm();
+        };
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById("toast");
+            const icon = document.getElementById("toast-icon");
+            
+            if (isError) {
+                icon.className = "fa-solid fa-circle-exclamation text-red-500 text-sm";
+            } else {
+                icon.className = "fa-solid fa-circle-check text-green-400 text-sm";
+            }
+            
+            document.getElementById("toast-message").innerText = msg;
+            toast.classList.remove("opacity-0", "pointer-events-none");
+            
+            setTimeout(() => {
+                toast.classList.add("opacity-0", "pointer-events-none");
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
